@@ -20,7 +20,7 @@ const FormTemplate = () => {
     setShowTemplate(true); // Set the flag to true when generating template
     try {
       console.log("Sending data...");
-      const response = await fetch("http://192.168.1.5:3000/api/generate-template", {
+      const response = await fetch("http://192.168.18.197:3000/api/generate-template", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

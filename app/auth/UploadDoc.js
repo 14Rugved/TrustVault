@@ -58,7 +58,7 @@ export default function UploadDoc() {
 
     try {
       // Replace with your local IP or ngrok URL
-      const response = await fetch('http://192.168.1.38:3000/api/ocr', {
+      const response = await fetch('http://192.168:18:197:3000/api/ocr', {
         method: 'POST',
         body: formData,
         headers: {
