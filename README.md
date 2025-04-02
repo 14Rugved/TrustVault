@@ -1,50 +1,77 @@
-# Welcome to your Expo app 👋
+TrustVault is a blockchain-based contract and document management system designed to provide secure document storage and contract handling for different users, including receptionists and patients. The system ensures immutability, access control, and seamless document retrieval, similar to Google Drive but enhanced with blockchain security.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/14Rugved/TrustVault) [![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/MIT) [![Version](https://img.shields.io/badge/version-1.0.0-orange)](https://github.com/14Rugved/TrustVault/releases)
 
-## Get started
-
-1. Install dependencies
-
+1. Clone the repository
    ```bash
-   npm install
+   git clone https://github.com/14Rugved/TrustVault.git
+   cd TrustVault
+   ```
+2. Install dependencies
+   ```bash
+   npm install  # For backend
+   cd frontend && npm install  # For React Native Expo frontend
+   ```
+3. Configure environment variables
+   Create a .env file in the root folder and add:
+   ```
+   DATABASE_URL=<Your PostgreSQL connection string>
+   FIREBASE_CONFIG=<Your Firebase credentials>
+   BLOCKCHAIN_RPC_URL=<Your Blockchain Node RPC>
+   TWILIO_SID=<Your Twilio SID>
+   TWILIO_AUTH_TOKEN=<Your Twilio Auth Token>
+   ```
+4. Start the backend server
+   ```bash
+   npm start
+   ```
+5. Start the mobile app
+   ```bash
+   cd frontend
+   npx expo start
    ```
 
-2. Start the app
+### API Endpoints
+| Method | Endpoint              | Description                |
+| ------ | --------------------- | -------------------------- |
+| POST   | /auth/signup          | Register a new user       |
+| POST   | /auth/login           | Authenticate user          |
+| POST   | /documents/upload     | Upload a document          |
+| GET    | /documents/view       | View all documents         |
+| POST   | /contracts/create     | Create a blockchain contract|
+| GET    | /contracts/view       | Retrieve contract details   |
 
-   ```bash
-    npx expo start
-   ```
+✅ User Authentication: Separate login systems for Receptionists and Patients.
+✅ Secure Document Storage: Upload and manage documents securely.
+✅ Blockchain Integration: Ensures tamper-proof contract storage.
+✅ Role-Based Access Control: Patients can access documents, but only receptionists can upload them.
+✅ Reminder & Notifications: Automatic reminders for contract deadlines.
+✅ PostgreSQL Backend: Efficient and scalable document management.
+✅ React Native Expo App: Seamless and user-friendly mobile experience.
 
-In the output, you'll find options to open the app in a
+### Tech Stack
+**Frontend**
+- React Native Expo ⚛️
+- Tailwind CSS 🎨
+- ShadCN UI Components 📱
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+**Backend**
+- Node.js & Express.js 🚀
+- PostgreSQL 🗄️
+- Firebase (for storing documents) 🔥
+- Blockchain (Smart Contracts for immutability) 🔗
+- Twilio & FCM (Notifications) 🔔
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Contributions are welcome! Follow these steps to contribute:
+1. Fork the repository 🍴
+2. Create a new branch: `git checkout -b feature-branch`
+3. Commit changes: `git commit -m 'Added new feature'`
+4. Push to branch: `git push origin feature-branch`
+5. Open a pull request 📩
 
-## Get a fresh project
+This project is licensed under the MIT License.
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+👤 Rugved Patil
+📧 rigved.221235.co@mhssce.ac.in
+📞 9022391299
+GitHub: [14Rugved](https://github.com/14Rugved)
