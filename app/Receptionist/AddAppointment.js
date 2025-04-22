@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { addAppointment, getPatients } from '../services/database';
@@ -8,6 +8,8 @@ function AddAppointment({ onSendAppointment }) {
   const router = useRouter();
   const [patients, setPatients] = useState([]);
   const [toggleForm, setToggleForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     patientId: "",
     date: "",
@@ -16,20 +18,32 @@ function AddAppointment({ onSendAppointment }) {
   });
 
   useEffect(() => {
-    // Fetch patients when component mounts
     const fetchPatients = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const result = await getPatients();
-        setPatients(result.rows._array);
+        setPatients(result);
       } catch (error) {
         console.error("Error fetching patients:", error);
+        setError("Failed to load patients. Please try again.");
+        Alert.alert("Error", "Failed to load patients. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
     fetchPatients();
   }, []);
 
   const handleSubmit = async () => {
+    if (!formData.patientId || !formData.date || !formData.time || !formData.reason) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
     try {
+      setLoading(true);
+      setError(null);
       await addAppointment(
         parseInt(formData.patientId),
         formData.date,
@@ -44,27 +58,50 @@ function AddAppointment({ onSendAppointment }) {
         reason: ""
       });
       setToggleForm(false);
+      Alert.alert("Success", "Appointment added successfully");
     } catch (error) {
       console.error("Error adding appointment:", error);
+      setError("Failed to add appointment. Please try again.");
+      Alert.alert("Error", "Failed to add appointment. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
+        style={styles.toggleButton}
         onPress={() => setToggleForm(!toggleForm)}
-        style={[styles.toggleButton, toggleForm && styles.toggleButtonActive]}
       >
-        <View style={styles.toggleButtonContent}>
-          <Ionicons name="add" size={24} color={toggleForm ? "#1d4ed8" : "#374151"} />
-          <Text style={[styles.toggleButtonText, toggleForm && styles.toggleButtonTextActive]}>
-            Add New Appointment
-          </Text>
-        </View>
+        <Ionicons
+          name={toggleForm ? "close-circle" : "add-circle"}
+          size={24}
+          color="#2563eb"
+        />
+        <Text style={styles.toggleButtonText}>
+          {toggleForm ? "Cancel" : "Add Appointment"}
+        </Text>
       </TouchableOpacity>
-      
+
       {toggleForm && (
-        <View style={styles.formContainer}>
+        <ScrollView style={styles.form}>
           <View style={styles.formGroup}>
             <Text style={styles.label}>Patient</Text>
             <View style={styles.selectContainer}>
@@ -72,7 +109,7 @@ function AddAppointment({ onSendAppointment }) {
                 style={styles.select}
                 value={formData.patientId}
                 onChangeText={(value) => setFormData({ ...formData, patientId: value })}
-                placeholder="Select a patient"
+                placeholder="Select patient"
               />
             </View>
           </View>
@@ -103,16 +140,22 @@ function AddAppointment({ onSendAppointment }) {
               style={[styles.input, styles.textArea]}
               value={formData.reason}
               onChangeText={(value) => setFormData({ ...formData, reason: value })}
-              placeholder="Enter appointment reason"
+              placeholder="Enter reason for appointment"
               multiline
-              numberOfLines={3}
+              numberOfLines={4}
             />
           </View>
 
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>Schedule Appointment</Text>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={handleSubmit}
+            disabled={loading}
+          >
+            <Text style={styles.submitButtonText}>
+              {loading ? "Adding..." : "Add Appointment"}
+            </Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -120,82 +163,75 @@ function AddAppointment({ onSendAppointment }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
-    borderRadius: 8,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   toggleButton: {
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  toggleButtonActive: {
-    backgroundColor: '#eff6ff',
-  },
-  toggleButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    backgroundColor: "#f3f4f6",
+    borderRadius: 8,
   },
   toggleButtonText: {
     marginLeft: 8,
     fontSize: 16,
-    color: '#374151',
+    color: "#2563eb",
   },
-  toggleButtonTextActive: {
-    color: '#1d4ed8',
-  },
-  formContainer: {
+  form: {
+    marginTop: 16,
     padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   formGroup: {
     marginBottom: 16,
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: "600",
+    color: "#374151",
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 6,
+    borderColor: "#d1d5db",
+    borderRadius: 4,
     padding: 12,
     fontSize: 16,
-    color: '#111827',
   },
   selectContainer: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 6,
+    borderColor: "#d1d5db",
+    borderRadius: 4,
   },
   select: {
     padding: 12,
     fontSize: 16,
-    color: '#111827',
   },
   textArea: {
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   submitButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: "#2563eb",
     padding: 12,
-    borderRadius: 6,
-    alignItems: 'center',
+    borderRadius: 4,
+    alignItems: "center",
   },
   submitButtonText: {
-    color: 'white',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "600",
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 16,
   },
 });
 

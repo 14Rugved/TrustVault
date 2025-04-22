@@ -4,6 +4,7 @@ import { useColorScheme } from 'react-native';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { initDatabase } from './services/databaseInit';
 
 export {
   ErrorBoundary,
@@ -29,6 +30,13 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  // Initialize database when app starts
+  useEffect(() => {
+    initDatabase().catch(error => {
+      console.error('Error initializing database:', error);
+    });
+  }, []);
 
   if (!loaded) {
     return null;

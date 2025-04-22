@@ -1,120 +1,136 @@
-import * as SQLite from 'expo-sqlite';
+import { db } from './databaseInit';
 
-// Initialize the database
-const db = SQLite.openDatabase('trustvault.db');
-
-// Initialize tables
-const initDatabase = () => {
+// Helper function to execute SQL queries with proper error handling
+const executeQuery = (query, params = []) => {
   return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      // Create appointments table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS appointments (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          patient_id INTEGER,
-          date TEXT,
-          time TEXT,
-          reason TEXT,
-          status TEXT DEFAULT 'scheduled',
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`,
-        [],
-        () => {
-          // Create patients table
-          tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS patients (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              name TEXT,
-              email TEXT,
-              phone TEXT,
-              created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )`,
-            [],
-            () => {
-              console.log('Database initialized successfully');
-              resolve();
-            },
-            (_, error) => {
-              console.error('Error creating patients table:', error);
-              reject(error);
-            }
-          );
-        },
-        (_, error) => {
-          console.error('Error creating appointments table:', error);
-          reject(error);
-        }
-      );
-    });
+    db.transaction(
+      tx => {
+        tx.executeSql(
+          query,
+          params,
+          (_, result) => resolve(result),
+          (_, error) => reject(error)
+        );
+      },
+      (error) => {
+        console.error('Transaction error:', error);
+        reject(error);
+      }
+    );
   });
 };
 
-// Initialize the database when the module is loaded
-initDatabase().catch(error => {
-  console.error('Error initializing database:', error);
-});
-
 export const getAppointments = async () => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM appointments ORDER BY date, time',
-        [],
-        (_, { rows }) => resolve(rows._array),
-        (_, error) => reject(error)
-      );
-    });
-  });
+  try {
+    const result = await executeQuery(
+      'SELECT a.*, p.name as patient_name FROM appointments a LEFT JOIN patients p ON a.patient_id = p.id ORDER BY a.date, a.time'
+    );
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    throw error;
+  }
 };
 
 export const addAppointment = async (patientId, date, time, reason) => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'INSERT INTO appointments (patient_id, date, time, reason) VALUES (?, ?, ?, ?)',
-        [patientId, date, time, reason],
-        (_, { insertId }) => resolve(insertId),
-        (_, error) => reject(error)
-      );
-    });
-  });
+  try {
+    const result = await executeQuery(
+      'INSERT INTO appointments (patient_id, date, time, reason) VALUES (?, ?, ?, ?)',
+      [patientId, date, time, reason]
+    );
+    return result.insertId;
+  } catch (error) {
+    console.error('Error adding appointment:', error);
+    throw error;
+  }
 };
 
 export const deleteAppointment = async (appointmentId) => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'DELETE FROM appointments WHERE id = ?',
-        [appointmentId],
-        (_, { rowsAffected }) => resolve(rowsAffected),
-        (_, error) => reject(error)
-      );
-    });
-  });
+  try {
+    const result = await executeQuery(
+      'DELETE FROM appointments WHERE id = ?',
+      [appointmentId]
+    );
+    return result.rowsAffected;
+  } catch (error) {
+    console.error('Error deleting appointment:', error);
+    throw error;
+  }
 };
 
 export const getPatients = async () => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM patients ORDER BY name',
-        [],
-        (_, { rows }) => resolve(rows._array),
-        (_, error) => reject(error)
-      );
-    });
-  });
+  try {
+    const result = await executeQuery(
+      'SELECT * FROM patients ORDER BY name'
+    );
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error fetching patients:', error);
+    throw error;
+  }
 };
 
-export const addPatient = async (name, email, phone) => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'INSERT INTO patients (name, email, phone) VALUES (?, ?, ?)',
-        [name, email, phone],
-        (_, { insertId }) => resolve(insertId),
-        (_, error) => reject(error)
-      );
-    });
-  });
-}; 
+export const getPatientById = async (patientId) => {
+  try {
+    const result = await executeQuery(
+      'SELECT * FROM patients WHERE id = ?',
+      [patientId]
+    );
+    return result.rows._array[0];
+  } catch (error) {
+    console.error('Error fetching patient:', error);
+    throw error;
+  }
+};
+
+export const addPatient = async (name, email, phone, disease = null, cost = null, prescription = null) => {
+  try {
+    const result = await executeQuery(
+      'INSERT INTO patients (name, email, phone, disease, cost, prescription) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, email, phone, disease, cost, prescription]
+    );
+    return result.insertId;
+  } catch (error) {
+    console.error('Error adding patient:', error);
+    throw error;
+  }
+};
+
+export const updatePatient = async (patientId, name, email, phone, disease = null, cost = null, prescription = null) => {
+  try {
+    const result = await executeQuery(
+      'UPDATE patients SET name = ?, email = ?, phone = ?, disease = ?, cost = ?, prescription = ? WHERE id = ?',
+      [name, email, phone, disease, cost, prescription, patientId]
+    );
+    return result.rowsAffected;
+  } catch (error) {
+    console.error('Error updating patient:', error);
+    throw error;
+  }
+};
+
+export const deletePatient = async (patientId) => {
+  try {
+    const result = await executeQuery(
+      'DELETE FROM patients WHERE id = ?',
+      [patientId]
+    );
+    return result.rowsAffected;
+  } catch (error) {
+    console.error('Error deleting patient:', error);
+    throw error;
+  }
+};
+
+export const searchPatients = async (query) => {
+  try {
+    const result = await executeQuery(
+      'SELECT * FROM patients WHERE name LIKE ? OR email LIKE ? OR phone LIKE ? ORDER BY name',
+      [`%${query}%`, `%${query}%`, `%${query}%`]
+    );
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error searching patients:', error);
+    throw error;
+  }
+};

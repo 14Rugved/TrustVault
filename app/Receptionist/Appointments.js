@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import AddAppointment from './AddAppointment';
 import AppointmentInfo from './AppointmentInfo';
@@ -11,13 +11,21 @@ function Appointments() {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("date");
   const [orderBy, setOrderBy] = useState("asc");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchAppointments = useCallback(async () => {
     try {
+      setLoading(true);
+      setError(null);
       const result = await getAppointments();
-      setAppointmentList(result.rows._array);
+      setAppointmentList(result);
     } catch (error) {
       console.error("Error fetching appointments:", error);
+      setError("Failed to load appointments. Please try again.");
+      Alert.alert("Error", "Failed to load appointments. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -27,24 +35,46 @@ function Appointments() {
 
   const handleDeleteAppointment = async (appointmentId) => {
     try {
-      await deleteAppointment(appointmentId);
-      setAppointmentList(appointmentList.filter(appointment => appointment.id !== appointmentId));
+      const result = await deleteAppointment(appointmentId);
+      if (result > 0) {
+        setAppointmentList(appointmentList.filter(appointment => appointment.id !== appointmentId));
+        Alert.alert("Success", "Appointment deleted successfully");
+      } else {
+        Alert.alert("Error", "Appointment not found");
+      }
     } catch (error) {
       console.error("Error deleting appointment:", error);
+      Alert.alert("Error", "Failed to delete appointment. Please try again.");
     }
   };
 
   const filteredAppointments = appointmentList
     .filter((item) => {
       return (
-        item.patient_name.toLowerCase().includes(query.toLowerCase()) ||
-        item.reason.toLowerCase().includes(query.toLowerCase())
+        item.patient_name?.toLowerCase().includes(query.toLowerCase()) ||
+        item.reason?.toLowerCase().includes(query.toLowerCase())
       );
     })
     .sort((a, b) => {
       let order = orderBy === "asc" ? 1 : -1;
       return a[sortBy] < b[sortBy] ? -1 * order : 1 * order;
     });
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading appointments...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -68,13 +98,17 @@ function Appointments() {
         />
         
         <View style={styles.appointmentsList}>
-          {filteredAppointments.map((appointment) => (
-            <AppointmentInfo
-              key={appointment.id}
-              appointment={appointment}
-              onDeleteAppointment={handleDeleteAppointment}
-            />
-          ))}
+          {filteredAppointments.length === 0 ? (
+            <Text style={styles.noAppointmentsText}>No appointments found</Text>
+          ) : (
+            filteredAppointments.map((appointment) => (
+              <AppointmentInfo
+                key={appointment.id}
+                appointment={appointment}
+                onDeleteAppointment={handleDeleteAppointment}
+              />
+            ))
+          )}
         </View>
       </View>
     </View>
@@ -84,17 +118,12 @@ function Appointments() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    padding: 16,
+    backgroundColor: '#fff',
   },
   header: {
-    marginBottom: 16,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
   },
   titleContainer: {
     flexDirection: 'row',
@@ -105,13 +134,25 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '600',
-    color: '#111827',
+    fontWeight: 'bold',
+    color: '#1f2937',
   },
   content: {
     flex: 1,
+    padding: 16,
   },
   appointmentsList: {
+    flex: 1,
+    marginTop: 16,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+  noAppointmentsText: {
+    textAlign: 'center',
+    color: '#6b7280',
     marginTop: 16,
   },
 });
