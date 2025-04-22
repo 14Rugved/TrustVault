@@ -22,7 +22,11 @@ const DoctorMgmt = () => {
         </TouchableOpacity>
       </View>
 
-      <TextInput placeholder="Search doctors" style={styles.searchBox} />
+      <TextInput 
+        placeholder="Search doctors" 
+        style={styles.searchBox} 
+        placeholderTextColor="#666"
+      />
 
       <View style={styles.filterSortContainer}>
         <TouchableOpacity style={styles.sortButton}>
@@ -33,7 +37,7 @@ const DoctorMgmt = () => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView>
+      <ScrollView style={styles.doctorList}>
         {doctors.map((doctor, index) => (
           <View key={index} style={styles.doctorCard}>
             <Text style={styles.doctorName}>{doctor.name}</Text>
@@ -54,7 +58,7 @@ const DoctorMgmt = () => {
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <TouchableOpacity onPress={() => router.push("/ReceptionistPage") }>
+        <TouchableOpacity onPress={() => router.push("/ReceptionistPage")}>
           <Ionicons name="home" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity>
@@ -99,6 +103,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 50,
     marginBottom: 16,
+    color: "black",
   },
   filterSortContainer: {
     flexDirection: "row",
@@ -115,6 +120,9 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+  doctorList: {
+    flex: 1,
+  },
   doctorCard: {
     backgroundColor: "black",
     padding: 16,
@@ -128,10 +136,12 @@ const styles = StyleSheet.create({
   },
   doctorInfo: {
     color: "#ccc",
+    marginTop: 4,
   },
   buttonRow: {
     flexDirection: "row",
     marginTop: 10,
+    justifyContent: "space-between",
   },
   receiptButton: {
     backgroundColor: "white",

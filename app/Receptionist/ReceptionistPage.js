@@ -1,14 +1,23 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
+import { Ionicons } from '@expo/vector-icons';
+import Sidebar from './Sidebar';
 
 const ReceptionistPage = () => {
   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.hamburgerButton} 
+          onPress={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          <Ionicons name="menu" size={24} color="#ffffff" />
+        </TouchableOpacity>
         <Text style={styles.headerText}>Receptionist</Text>
         <View style={styles.headerIcons}>
           {/* Profile Icon */}
@@ -33,36 +42,34 @@ const ReceptionistPage = () => {
         </View>
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.section}>
-          <TouchableOpacity onPress={() => router.push('../Receptionist/PatientTab')}>
-            <Text style={styles.sectionTitle}>Today's Appointments</Text>
-          </TouchableOpacity>
-          <View style={styles.card}>
-            <Text style={styles.appointment}>John Smith - 10:00 AM - Consultation</Text>
-            <Text style={styles.appointment}>Emily Johnson - 11:30 AM - Follow-up</Text>
-            <Text style={styles.appointment}>Michael Lee - 2:00 PM - New Patient</Text>
+      <View style={styles.mainContent}>
+        {isSidebarOpen && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
+        <ScrollView style={styles.content}>
+          <View style={styles.section}>
+            <TouchableOpacity onPress={() => router.push('/Receptionist/PatientTab')}>
+              <Text style={styles.sectionTitle}>Today's Appointments</Text>
+            </TouchableOpacity>
+            <View style={styles.card}>
+              <Text style={styles.appointment}>John Smith - 10:00 AM - Consultation</Text>
+              <Text style={styles.appointment}>Emily Johnson - 11:30 AM - Follow-up</Text>
+              <Text style={styles.appointment}>Michael Lee - 2:00 PM - New Patient</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Pending Prescriptions</Text>
-          <View style={styles.card}>
-            <Text style={styles.prescription}>Lisa Brown - Amoxicillin</Text>
-            <Text style={styles.prescription}>David Wilson - Ibuprofen</Text>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Pending Prescriptions</Text>
+            <View style={styles.card}>
+              <Text style={styles.prescription}>Lisa Brown - Amoxicillin</Text>
+              <Text style={styles.prescription}>David Wilson - Ibuprofen</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Fee Receipts</Text>
-          <View style={styles.card}>
-            <Text style={styles.receipt}>Receipt #1234 - $200</Text>
-            <Text style={styles.receipt}>Receipt #1235 - $150</Text>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Fee Receipts</Text>
+            <View style={styles.card}>
+              <Text style={styles.receipt}>Receipt #1234 - $200</Text>
+              <Text style={styles.receipt}>Receipt #1235 - $150</Text>
+            </View>
           </View>
-        </View>
-      </View>
-
-      <View style={styles.buttons}>
-        <Button title="Patient Management" onPress={() => router.push('../Receptionist/PatientMgmt')} />
-        <Button title="Doctor Management" onPress={() => router.push('../Receptionist/DocMgmt')} />
+        </ScrollView>
       </View>
     </View>
   );
@@ -81,6 +88,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
     marginTop: 20,
   },
+  hamburgerButton: {
+    padding: 5,
+  },
   headerText: {
     color: '#ffffff',
     fontSize: 24,
@@ -98,7 +108,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     marginLeft: 15,
   },
+  mainContent: {
+    flex: 1,
+    flexDirection: 'row',
+  },
   content: {
+    flex: 1,
     padding: 20,
   },
   section: {
@@ -135,13 +150,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: '#ffffff',
   },
-  buttons: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 30,
-    gap: 20,
-  },
 });
 
-export default ReceptionistPage;
+export default ReceptionistPage; 

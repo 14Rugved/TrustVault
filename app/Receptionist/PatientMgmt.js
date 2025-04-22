@@ -22,7 +22,11 @@ const PatientMgmt = () => {
         </TouchableOpacity>
       </View>
 
-      <TextInput placeholder="Search patients" style={styles.searchBox} />
+      <TextInput 
+        placeholder="Search patients" 
+        style={styles.searchBox} 
+        placeholderTextColor="#666"
+      />
 
       <View style={styles.filterSortContainer}>
         <TouchableOpacity style={styles.sortButton}>
@@ -33,7 +37,7 @@ const PatientMgmt = () => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView>
+      <ScrollView style={styles.patientList}>
         {patients.map((patient, index) => (
           <View key={index} style={styles.patientCard}>
             <Text style={styles.patientName}>{patient.name}</Text>
@@ -41,12 +45,12 @@ const PatientMgmt = () => {
             {patient.lastAppointment && <Text style={styles.patientInfo}>Last Appointment: {patient.lastAppointment}</Text>}
 
             <View style={styles.buttonRow}>
-            <TouchableOpacity 
-              style={styles.receiptButton} 
-                    onPress={() => router.push('../Receptionist/FormTemplate')}
-                              >
-                   <Text style={styles.receiptText}>Prescription</Text>
-               </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.receiptButton} 
+                onPress={() => router.push('../Receptionist/FormTemplate')}
+              >
+                <Text style={styles.receiptText}>Prescription</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity style={styles.receiptButton}>
                 <Text style={styles.receiptText}>Receipts</Text>
@@ -102,6 +106,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 50,
     marginBottom: 16,
+    color: "black",
   },
   filterSortContainer: {
     flexDirection: "row",
@@ -118,6 +123,9 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
+  patientList: {
+    flex: 1,
+  },
   patientCard: {
     backgroundColor: "black",
     padding: 16,
@@ -131,10 +139,12 @@ const styles = StyleSheet.create({
   },
   patientInfo: {
     color: "#ccc",
+    marginTop: 4,
   },
   buttonRow: {
     flexDirection: "row",
     marginTop: 10,
+    justifyContent: "space-between",
   },
   receiptButton: {
     backgroundColor: "white",

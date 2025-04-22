@@ -1,105 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  View, FlatList, StyleSheet, Dimensions, Text, TouchableOpacity, ActivityIndicator 
-} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
-// Get screen width for responsive design
 const { width } = Dimensions.get('window');
-
-// Import local JSON files (Update paths if necessary)
-import template1 from '../../templates/1739188742596.json';
-import template2 from '../../templates/1739189428010.json';
-import template3 from '../../templates/1739189551977.json';
 
 export default function HealthCare() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [templateDocs, setTemplateDocs] = useState([]);
-
-  useEffect(() => {
-    // Simulate fetching local templates
-    const loadTemplates = async () => {
-      try {
-        // Combine all local JSON templates
-        const templates = [template1, template2, template3];
-        setTemplateDocs(templates);
-      } catch (error) {
-        console.error("Error loading templates:", error);
-        setTemplateDocs([]); // Ensure UI does not break
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadTemplates();
-  }, []);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.backButton}
-        onPress={() => router.back()}
-      >
-        <Ionicons name="arrow-back-sharp" size={24} color="black" />
-      </TouchableOpacity>
-
       <Text style={styles.heading}>Health Care Documents</Text>
 
-      {loading ? (
-        <ActivityIndicator size="large" color="blue" />
-      ) : templateDocs.length > 0 ? (
-        <FlatList 
-          data={templateDocs}
-          keyExtractor={(item, index) => index.toString()} 
-          renderItem={({ item }) => (
-            <View style={styles.docItem}>
-              <Text style={styles.modalText}>👤 Patient: {item.patientName}</Text>
-              <Text style={styles.modalText}>🩺 Doctor: {item.doctorName}</Text>
-              <Text style={styles.modalText}>💊 Medication: {item.medication}</Text>
-              <Text style={styles.modalText}>📅 Follow-up: {item.followUpDate}</Text>
-              {item.notes ? <Text style={styles.modalText}>📝 Notes: {item.notes}</Text> : null}
-            </View>
-          )}
-        />
-      ) : (
-        <Text style={styles.modalText}>No documents available</Text>
-      )}
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => router.push('./ViewPrescriptions')}>
+        <Text style={styles.buttonText}>View Prescriptions</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => router.push('./ViewDocuments')}>
+        <Text style={styles.buttonText}>View Other Documents</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#f8f8f8',
-    margin: width > 786 ? 60 : 10,
-    marginBottom: width > 786 ? 0 : 10,
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginTop: 40,
-    marginRight: 20,
   },
   heading: {
     fontSize: width > 600 ? 30 : 24,
     fontWeight: 'bold',
-    marginBottom: 20,
-    marginTop: width > 786 ? 10 : 40,
+    marginBottom: 30,
   },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  docItem: {
-    padding: 10,
-    backgroundColor: "#f2f2f2",
-    marginVertical: 5,
-    width: "90%",
+  button: {
+    width: "80%",
+    padding: 15,
+    backgroundColor: "#007bff",
     borderRadius: 5,
-    alignItems: "flex-start"
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   }
 });
