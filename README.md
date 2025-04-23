@@ -1,50 +1,103 @@
-# Welcome to your Expo app 👋
+# TrustVault - A Secure Contract and Document Management System
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+![Expo](https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37)
+![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 
-## Get started
+TrustVault is a modern document management application built with Expo and React Native. It provides a secure and efficient way to manage, store, and organize your important documents.
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- 📱 Cross-platform support (iOS, Android, Web)
+- 🔒 Secure document storage
+- 📄 Document scanning and OCR capabilities
+- 🖼️ Image capture and management
+- 📊 PDF generation and sharing
+- 🔍 Advanced search functionality
+- 🎨 Modern and intuitive UI
 
-2. Start the app
+## Prerequisites
 
-   ```bash
-    npx expo start
-   ```
+Before you begin, ensure you have the following installed:
+- Node.js (v14 or later)
+- npm or yarn
+- Expo CLI (`npm install -g expo-cli`)
+- iOS Simulator (for Mac users) or Android Studio (for Android development)
 
-In the output, you'll find options to open the app in a
+## Installation
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+1. Clone the repository:
 ```bash
-npm run reset-project
+git clone https://github.com/yourusername/TrustVault.git
+cd TrustVault
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
 
-## Learn more
+3. Start the development server:
+```bash
+npm start
+# or
+yarn start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Available Scripts
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- `npm start` - Start the Expo development server
+- `npm run android` - Run the app on Android
+- `npm run ios` - Run the app on iOS
+- `npm run web` - Run the app in web browser
+- `npm test` - Run tests
+- `npm run lint` - Run linter
 
-## Join the community
+## Project Structure
 
-Join our community of developers creating universal apps.
+```
+TrustVault/
+├── app/                 # Main application code
+├── assets/             # Static assets (images, fonts)
+├── components/         # Reusable UI components
+├── configs/            # Configuration files
+├── constants/          # App constants and enums
+├── scripts/            # Utility scripts
+└── templates/          # Template files
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Technologies Used
+
+- Expo
+- React Native
+- TypeScript
+- Firebase
+- Expo Router
+- React Navigation
+- Expo SQLite
+- Tesseract.js (OCR)
+- React Native WebView
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For support, email support@trustvault.com or join our Slack channel.
+
+## Acknowledgments
+
+- Expo team for the amazing framework
+- React Native community
+- All contributors who have helped shape this project

@@ -2,12 +2,13 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Addnew from './PatientManagement'
 
 const Sidebar = ({ onClose }) => {
   const router = useRouter();
 
   const menuItems = [
-    { title: 'Add New Patient', icon: 'person-add', route: '/Receptionist/PatientManagement' },
+    { title: 'Add New Patient', icon: 'person-add', route: '/Receptionist/AddNewPatient' },
     { title: 'Add Appointment', icon: 'calendar', route: '/Receptionist/AddAppointment' },
     { title: 'Patient Management', icon: 'people', route: '/Receptionist/PatientMgmt' },
     { title: 'Doctor Management', icon: 'medical', route: '/Receptionist/DocMgmt' },

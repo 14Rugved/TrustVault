@@ -42,7 +42,7 @@ export default function SignIn() {
       if (!receptionistDocs.empty) {
         router.replace('Receptionist/ReceptionistPage');
       } else if (!patientDocs.empty) {
-        router.replace('tabs/MainPage');
+        router.replace('UploadDoc');
       } else {
         throw new Error("User role not found in database.");
       }
